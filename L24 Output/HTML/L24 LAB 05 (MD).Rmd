@@ -1,0 +1,58 @@
+---
+title: "L24 LAB 05 (MD)"
+author: "AnaGSanjuanM"
+date: "2023-02-22"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+Cargar paquete tidyverse y readr
+```{r}
+library(tidyverse)
+library(readr)
+```
+
+
+CARGAR DATOS
+
+En la ventana de Data (al frente) damos clic en Import Dataset y buscamos la ubicación del archivo que generamos, el ICE 2014 en csv. Se puede importar desde la ventana que se abrió. También, en la parte inferior se mostrará el código, lo copiamos y pegamos aquí para correrlo pero antes sustituimos lo que dice ICE_2014 por tabla1
+
+Este es el código original obtenido
+```{r}
+library(readr)
+
+ICE_2014 <- read_csv("ICE 2014.csv")
+```
+
+Este es el código modificado que se correrá
+```{r}
+tabla1 <- read_csv("ICE 2014.csv")
+```
+
+Para ver los nombres de la tabla
+```{r}
+names(tabla1)
+```
+
+INSTRUCCIONES
+
+Se tiene una matriz ordenada a lo ancho
+
+1. Se requiere pivotar la tabla "a lo largo". Generar tabla que se llama ti_PIVOTANTE. Como input debe tener la tabla1 que se acaba de cargar. Colocar operador pip %>% (que es un filtro). Entonces se pivotea a lo largo las columnas de Km. Se llamará iteración y su valor será el ranking
+```{r}
+t1_PIVOTANTE = tabla1 %>%
+  pivot_longer(cols = c("Km,0" , "Km,2" , "Km,4" , "Km,6" , "Km,8" , "Km,10" , "Km,12" , "Km,14" , "Km,16" , "Km,18" , "Km,20" , "Km,22" , "Km,24" , "Km,26" ),names_to = "iteracion", values_to = "ranking")
+```
+
+Ahora se va a exportar
+
+En formato separado por comas csv. El input será la tabla pivotante t1_PIVOTANTE que se acaba de generar. El archivo se llamará ice_CHARTICULATOR.csv
+```{r}
+write.csv(t1_PIVOTANTE, file = "ice_CHARTICULATOR.CSV")
+```
+
+Para saber en qué ruta se guardó ejecuto el comando. Está en los documentos.
+```{r}
+getwd()
+```

@@ -1,0 +1,123 @@
+---
+title: "L24 LAB 08 (MD)"
+author: "AnaGSanjuanM"
+date: "2023-02-22"
+output: html_document
+---
+
+Hecho con gusto por Dra. CarlaC. Pérez-Hernández
+
+LABORATORIO - RELACIONAMIENTO "CASO HIPOTÉTICO" 
+
+Objetivo: Estimar el relacionamiento (relatedness, proximidad, métrica de distancia entre productos)
+
+En este ejercicio vamos a:
+
+1. Cargar nuestra matriz hipotética de datos
+
+2. Calcular co ocurrencias entre personas y productos 
+
+3. Estimar el relacionamiento, teniendo como input las co ocurrencias
+
+4. Graficar
+
+-------------------------LABORATORIO NÚMERO 8------------------------------
+
+¿Cómo se mide la proximidad (relatedness) para crear el espacio producto?
+
+Material: Balland, P.A. (2017) Economic Geography in R: Introduction to the EconGeo Package, Papers in Evolutionary Economic Geography, 17 (09): 1-75. Para instalar: https://www.paballand.com/install-r
+
+INSTALACIONES
+install.packages ("igraph")
+install.packages(“visNetwork”)
+install.packages(“htmlwidgets”)
+install.packages(“igraph”)
+install.packages(“reforma”)
+install.packages(“Matrix”)
+install.packages(“RSiena”)
+install. paquetes(“networkD3”)
+install.packages(“curl”)
+install.packages(“devtools”)
+biblioteca(devtools)
+devtools::install_github(“PABalland/EconGeo”, force = T)
+
+Ya que están instaladas, se corre el comando library
+```{r}
+library(EconGeo)
+```
+
+Importamos una matriz
+
+Archivo en cvs, separados por comas. La fila inicial tiene los títulos T (Titles). La primera columna tendrá el nombre de las variables. #Se selecciona desde la M hasta los últimos dos paréntesis después del 1.
+```{r}
+M = as.matrix(
+  read.csv("https://raw.githubusercontent.com/PABalland/ON/master/amz.csv" , 
+           sep = ",", 
+           header = T, 
+           row.names = 1))
+```
+
+Para ver la matriz, ejecutar M
+```{r}
+M
+```
+
+En la consola (ventana de abajo) se puede ver la matriz creada. La primera columna se muestran los nombres de los participantes. En los renglones se tienen los productos.
+
+Cálculo de co-ocurrencias (cuántos empates de compra entre participantes). Co-ocurrencia entre personas/paises/estados.
+```{r}
+co.occurrence (M)
+```
+
+Cálculo de co-ocurrencias de la matriz transpuesta para enfocarse en productos. Co-ocurrencia entre productos t es transpuesta.
+```{r}
+c = co.occurrence (t(M))
+```
+
+Para visualizar c
+```{r}
+c
+```
+
+Estima el relacionamiento o proximidad pero normalizado, para asegurar que el número de co ocurrencias que observamos. Es mayor al número de co ocurrencias probables (probabilidad condicional)
+```{r}
+r = relatedness (c)
+```
+
+Para ver el resultado, corremos r. Tie y Surfboard puede que no esten tan relacionados, abajo de  1 no es relacionado mientras que mayor a 1 si es relacionado
+```{r}
+r
+```
+
+Para poder apreciar el algoritmo de dicho comando, corremos relatedness
+```{r}
+relatedness
+```
+
+Regla para ejecutar el relacionamiento. 
+
+Si es menor a uno, le corresponde cero. Lo que implica que no haya arista que se ligue al producto
+```{r}
+r[r<1] = 0
+```
+
+Si es mayor a uno, le corresponde uno. Lo que implica que si haya arista que se ligue al producto
+```{r}
+r[r>1] = 1
+```
+
+Para graficar el espacio-producto, se ejecuta la siguiente paquetería:
+```{r}
+library (igraph)
+```
+
+Corremos el comando que tiene como input el relacionamiento calculado anteriormente con la regla binaria de manera no dirigida.
+```{r}
+g1 = graph_from_adjacency_matrix (r, mode = "undirected")
+```
+
+Ahora graficamos. Se puede apreciar en el cuadrante de visualizaciones (plot).
+```{r}
+plot(g1)
+```
+
